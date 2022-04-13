@@ -5,6 +5,8 @@ from time import sleep
 import os
 import pandas as pd
 from keys import Keys
+#TODO: get feature including the whole hlocv+RSI not just C+RSI
+
 def randomString(length=6):
     word = ""
     nums = [str(i) for i in range(9)]
