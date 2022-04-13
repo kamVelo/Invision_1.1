@@ -1,0 +1,21 @@
+test runs:
+information about spread and centrality for reinforcement learning rewards by date:
+
+11/04/2022 - v1 - with rewards weighted to prioritise later profits (t - t_0) / 2 is the multiplier:
+    for AAPL
+    buy rewards
+        mu = -1.3
+        S.D = 249.9
+    sell rewards:
+        mu = -4.7
+        S.D = 249.9
+    so there is a very slight long bias, however in both there is a bias against acting alltogether.
+11/04/2022 - v2 - unweighted rewards:
+    for AAPL
+    buy rewards:
+        mu = -2.48
+        S.D = 80.11
+    sell rewards:
+        mu = -3.52
+        S.D = 80.11
+    so again long bias however the gap is smaller this time, the reduction in S.D is to be expected since the weighting multiplier above served to increase the rewards in all cases
