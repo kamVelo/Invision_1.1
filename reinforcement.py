@@ -95,11 +95,18 @@ class Environment:
         rewards = self.calcRewards()
 
         # fill out columns in dataset
-        buyRewards = [arr[0] for arr in rewards]
-        passRewards = [arr[1] for arr in rewards]
-        sellRewards = [arr[2] for arr in rewards]
-
-        decisions = [np.argmax([buyRewards[i],passRewards[i], sellRewards[i]]) for i in range(len(buyRewards))]
+        buyRewards = []
+        passRewards = []
+        sellRewards = []
+        decisions = []
+        for arr in rewards:
+            print(arr)
+            buyRewards.append(arr[0])
+            passRewards.append(arr[1])
+            sellRewards.append(arr[2])
+            decision = np.argmax(arr)
+            print(decision)
+            decisions.append(decision)
         print(decisions)
         self.dset["Buy Reward"] = buyRewards
         self.dset["Pass Reward"] = passRewards
