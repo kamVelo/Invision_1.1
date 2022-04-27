@@ -10,6 +10,9 @@ from position import Position
 import finnhub
 import os
 from keys import Keys
+
+#TODO: add resize function for when order size is too large (error code 201)
+
 class IB(EClient,EWrapper):
     def __init__(self):
         key = Keys.get("finnhub")
