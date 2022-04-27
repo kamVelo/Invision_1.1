@@ -69,7 +69,7 @@ def getMovers():
     """
 
     # starts browser
-    url = "https://finviz.com/screener.ashx?v=111&f=cap_midover,sh_price_5to50,ta_averagetruerange_u2,ta_sma20_cross50a&ft=4&o=-volume"
+    url = "https://finviz.com/screener.ashx?v=111&f=sh_price_20to50,ta_gap_u5&ft=3"
     opts = Options()
     opts.headless = False
     browser = Chrome(options=opts)
