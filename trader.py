@@ -27,7 +27,7 @@ class Trader:
         # gets stock to trade
         getset = input("Enter Y to select a specific stock, C to choose from a screener, or N to have it chosen automatically,\nor enter F to automatically choose at next open: ")
         if getset.upper() == "Y":
-            self.symbol = input("Enter a  stock: ").upper()
+            self.symbol = input("Enter a  stock: ").strip().upper()
         elif getset.upper() == "C":
             self.symbol = self.getStock()
         elif getset.upper() =="N":
