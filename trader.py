@@ -39,7 +39,10 @@ class Trader:
             timeToGet = lambda: getStockTime <= dt.now().astimezone(ny).time() < dontGet
             while not timeToGet():
                 pass
-            self.symbol = self.getStock(auto=True)
+            try:
+                self.symbol = self.getStock(auto=True)
+            except Exception:
+                self.symbol = "MSFT"
         else:
             print("Invalid input. Closing Program.")
             exit(0)
