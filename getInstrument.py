@@ -77,14 +77,14 @@ def getMovers():
     browser.maximize_window()
     browser.execute_script("window.scrollTo(0,200);")
     script = """ 
-    stock_table = document.getElementsByTagName('tr')[40];
-    stocks = stock_table.getElementsByTagName('tr');
-    let arr = Array.from(stocks);
+    table = document.getElementsByClassName('table-light')[0]
+    let arr = Array.from(table.getElementsByTagName('tr'))
     return arr;
     """
     raw_stocks = browser.execute_script(script)[1:]
     stocks = []
     for raw_stock in raw_stocks:
+        print("hello")
         try:
             ticker = raw_stock.find_elements_by_tag_name("td")[1].text
             price = float(raw_stock.find_elements_by_tag_name("td")[8].text)
