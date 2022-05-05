@@ -246,7 +246,7 @@ class Environment:
             #  standard deviation above the median reward ( one sd since the rewards are all standard scaled)
         plt.title("profits over run through")
         plt.plot(list(range(len(totalProfitOverTime))), totalProfitOverTime)
-        plt.show()
+        #plt.show()
         print("Biggest win/loss: ", profits[np.argmax([abs(x) for x in profits])])
         print(positions)
         return round(totalProfit,2)
