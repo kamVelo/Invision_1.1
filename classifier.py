@@ -9,6 +9,7 @@ import pandas as pd
 import os
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
+import joblib
 
 
 class Classifier:
@@ -42,6 +43,7 @@ class Classifier:
         # get data remove 14 rows off the end of dset to account for rsi delay, reverse the array so it is in proper CHRONOLOGICAL order
         self.dset = pd.read_csv(os.path.join("data", self.symbol, "5min.csv")).iloc[:-16, 1:].iloc[::-1]
         self.rsi = pd.read_csv(os.path.join("data", self.symbol, "RSI.csv")).iloc[:, 1:].iloc[::-1]
+        self.scalerPath = os.path.join("data", symbol, "scaler.bin")
         # add rsi column to the main dset
         self.dset["RSI"] = self.rsi["RSI"]
         print(len(self.dset))
@@ -86,8 +88,13 @@ class Classifier:
         num_cats = 2
         
         # Standardise the data
-        scaler = StandardScaler()
+        # if there is a scaler already saved for this stock use that
+        if os.path.exists(self.scalerPath):
+            scaler = joblib.load(self.scalerPath)
+        else:
+            scaler = StandardScaler()
         self.scaled = scaler.fit_transform(self.dset)
+        joblib.dump(scaler, self.scalerPath, compress=True)
 
         # fitting the model
         self.model = KMeans(init="random", n_clusters=num_cats, n_init=3, max_iter=300, random_state=42)
