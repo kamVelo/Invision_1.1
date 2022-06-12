@@ -108,7 +108,8 @@ class IB(EClient,EWrapper):
         self.insuff_funds = None
         self.placeOrder(self.nextValidOrderId, contract, order)
         sleep(0.5)
-        if self.insuff_funds: return None
+        if self.insuff_funds:
+            return None
         self.orderMade = True
         self.raw_pos = []
         sleep(5)

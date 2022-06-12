@@ -189,7 +189,7 @@ class Environment:
                     weightedDiffs += currentDiff  # no weighting - test case
                 except IndexError: # this occurs if there are no more rows.
                     break
-            rewards.append([weightedDiffs - 3, -0.1 * abs(weightedDiffs), -1 * weightedDiffs - 3]) # - 3 to account for commission; - 0.1 to account for lost profit
+            rewards.append([weightedDiffs - 1.5, -0.1 * abs(weightedDiffs), -1 * weightedDiffs - 1.5]) # - 3 to account for commission; - 0.1 to account for lost profit
         return rewards
 
     def predict(self,feature):

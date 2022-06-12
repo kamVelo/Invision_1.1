@@ -223,10 +223,7 @@ class Trader:
                 # - assigns the current position
                 # - to the return given by the positions opening using IB
                 self.position = self.position.open()
-            elif pred == None and self.position:
-                self.position.close()
-                self.pos_manager.record(self.position)
-                self.position = None
+
         else: # if no position currently exists
             # announce a prediction
             print(f"\t{dt.today()} - Prediction: {pred}")

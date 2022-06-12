@@ -84,7 +84,6 @@ def getMovers():
     raw_stocks = browser.execute_script(script)[1:]
     stocks = []
     for raw_stock in raw_stocks:
-        print("hello")
         try:
             ticker = raw_stock.find_elements_by_tag_name("td")[1].text
             price = float(raw_stock.find_elements_by_tag_name("td")[8].text)
