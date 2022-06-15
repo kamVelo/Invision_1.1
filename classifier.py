@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 import numpy as np
 import pandas as pd
 import os
-from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import Sequential,load_model
 from tensorflow.keras.layers import Dense
 import joblib
 
@@ -44,9 +44,9 @@ class Classifier:
         self.dset = pd.read_csv(os.path.join("data", self.symbol, "5min.csv")).iloc[:-16, 1:].iloc[::-1]
         self.rsi = pd.read_csv(os.path.join("data", self.symbol, "RSI.csv")).iloc[:, 1:].iloc[::-1]
         self.scalerPath = os.path.join("data", symbol, "scaler.bin")
+        self.nn_path = os.path.join("data", symbol, "model")
         # add rsi column to the main dset
         self.dset["RSI"] = self.rsi["RSI"]
-        print(len(self.dset))
         # get number of hour sections
         num_sects = round(len(self.dset) / 12)
 
@@ -131,16 +131,18 @@ class Classifier:
         x_train, self.x_test, y_train, self.y_test = train_test_split(features, labels, test_size=0.2)
 
         # creating the neural network
-        self.nn_model = Sequential()
-        self.nn_model.add(Dense(64, activation="tanh"))
-        self.nn_model.add(Dense(32, activation="tanh"))
-        self.nn_model.add(Dense(16, activation="tanh"))
-        self.nn_model.add(Dense(1, activation="sigmoid"))
-
+        if os.path.exists(os.path.join(self.nn_path)):
+            self.nn_model = load_model(self.nn_path)
+        else:
+            self.nn_model = Sequential()
+            self.nn_model.add(Dense(64, activation="tanh"))
+            self.nn_model.add(Dense(32, activation="tanh"))
+            self.nn_model.add(Dense(16, activation="tanh"))
+            self.nn_model.add(Dense(1, activation="sigmoid"))
+            self.nn_model.compile(loss="binary_crossentropy", metrics=["accuracy"], optimizer="adam")
         # fitting the neural network
-        self.nn_model.compile(loss="binary_crossentropy", metrics=["accuracy"], optimizer="adam")
         self.nn_model.fit(x_train, y_train, batch_size=32, epochs=100)
-
+        self.nn_model.save(self.nn_path)
         # tests the neural network on the test set and prints the accuracy and loss
         scores = self.nn_model.evaluate(self.x_test, self.y_test, verbose=0)
         print('Accuracy on test data: {}% \n Error on test data: {}%'.format(round(scores[1] * 100, 2),
@@ -210,5 +212,5 @@ if __name__ == "__main__":
 """
 if __name__ == '__main__':
     c = Classifier("AAPL")
-    c.show()
-    #c.prepNN()
+
+    c.prepNN()
