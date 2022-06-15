@@ -19,10 +19,11 @@ class IB(EClient,EWrapper):
         self.finnhub_client = finnhub.Client(api_key=key)
         self.pnlReqId = 1
         self.profit_requested = None
-        self.positionReceived = False
-        self.orderMade = False
+        self.position_received = False
+        self.order_made = False
         self.raw_pos = []
         self.balance = 10
+        self.num_bal_fail = 0
         # necessary instantiations per IBAPI documentation
         EWrapper.__init__(self)
         EClient.__init__(self, wrapper=self)
@@ -45,7 +46,7 @@ class IB(EClient,EWrapper):
 
         super().nextValidId(orderId)
         logging.debug("setting nextValidOrderId: %d", orderId)
-        self.nextValidOrderId = orderId
+        self.next_valid_order_id = orderId
 
     def error(self, reqId:int, errorCode:int, errorString:str):
         """
@@ -60,7 +61,7 @@ class IB(EClient,EWrapper):
         elif errorCode == 201:
             self.insuff_funds = True
         elif errorCode == 103:
-            self.nextValidOrderId += 1
+            self.next_valid_order_id += 1
     def order(self, instrument, direction):
         """
         function to allow market orders to be created and placed
@@ -100,17 +101,17 @@ class IB(EClient,EWrapper):
         order.orderType = "MKT"
         order.totalQuantity = quantity
         # gets latest order id
-        old_val = self.nextValidOrderId
+        old_val = self.next_valid_order_id
         self.reqIds(-1)
-        while self.nextValidOrderId == old_val and self.orderMade:  # waits until order id updated.
+        while self.next_valid_order_id == old_val and self.order_made:  # waits until order id updated.
             pass
         # places the order and returns True since no errors would have been raised by this point.
         self.insuff_funds = None
-        self.placeOrder(self.nextValidOrderId, contract, order)
+        self.placeOrder(self.next_valid_order_id, contract, order)
         sleep(0.5)
         if self.insuff_funds:
             return None
-        self.orderMade = True
+        self.order_made = True
         self.raw_pos = []
         sleep(5)
         id = None
@@ -159,7 +160,13 @@ class IB(EClient,EWrapper):
             if diff > 5.0:
                 print("Application Error:")
                 print("Application not returning balance.")
-                self.end()
+                if self.balance_fail > 2: #i.e 3 failed attempts (across 15 minutes)
+                    self.end()
+                else:
+                    print(2-self.num_bal_fails, " left until the application closes")
+
+
+
         self.cancelAccountSummary(-1)
         return self.balance
 
@@ -191,7 +198,7 @@ class IB(EClient,EWrapper):
         called when all the position information has been sent.
         :return: None
         """
-        self.positionReceived = True
+        self.position_received = True
 
     def getMargin(self, symbol):
         """
@@ -200,7 +207,7 @@ class IB(EClient,EWrapper):
         :return: float margin of the stock.
         """
         self.raw_pos = []
-        self.positionReceived = False
+        self.position_received = False
         self.reqPositions() # use eclient method to get position info.
         while len(self.raw_pos) == 0: # waits for the position information to be fully received using positionEnd()
             pass
@@ -268,18 +275,18 @@ class IB(EClient,EWrapper):
         order.totalQuantity = position.shares
 
         # gets latest order id
-        old_val = self.nextValidOrderId
+        old_val = self.next_valid_order_id
         self.reqIds(-1)
-        while self.nextValidOrderId == old_val and self.orderMade:  # waits until order id updated.
+        while self.next_valid_order_id == old_val and self.order_made:  # waits until order id updated.
             pass
         # places the order and returns True since no errors would have been raised by this point.
-        self.placeOrder(self.nextValidOrderId, contract, order)
+        self.placeOrder(self.next_valid_order_id, contract, order)
         return True
     def getPositions(self):
         self.raw_pos = []
-        self.positionReceived = False
+        self.position_received = False
         self.reqPositions()
-        while not self.positionReceived: # waits until list is populated by (EWrapper.position)
+        while not self.position_received: # waits until list is populated by (EWrapper.position)
             pass
         return self.raw_pos
 
