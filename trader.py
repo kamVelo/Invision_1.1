@@ -16,9 +16,6 @@ import pytz
 from reinforcement import Environment as RL
 #TODO: everytime you download data for a stock (monthly) add this data to the original data file
 #TODO: stocks data folder should have a file which contains metadata specifically abt how much of the data the neural network has already been trained on
-#TODO: save neural network so that you don't have to retrain it on the whole dataset everytime - this means that the rest of the dataset will also be "internalised" each time
-#TODO: add wifi-down feature that keeps hte application open if there's no internet connection
-#TODO: improve tws disconnection management.
 class Trader:
     def __init__(self):
         self.beginning = True
